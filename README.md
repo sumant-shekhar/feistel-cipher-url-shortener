@@ -22,3 +22,39 @@ $$L_i = R_{i-1}$$
 $$R_i = L_{i-1} \oplus F(R_{i-1}, K_i)$$
 
 The round function $F$ utilizes a pseudo-random bit-shuffling mechanism driven by a static internal key $K$.
+
+# 🔗 Cipher URL Shortener
+
+A high-performance URL shortener built with Django and Python. Instead of auto-incrementing public IDs or saving random strings in a database, this project secures internal database IDs using a Format-Preserving Feistel Cipher combined with Base62 encoding.
+
+## 🚀 Technical Architecture
+1. **Database Entry**: Stores the long URL and retrieves a standard sequential Auto-ID (e.g., `105`).
+2. **Feistel Cipher**: Scrambles the sequential ID into a pseudo-random, non-sequential 32-bit integer using a private secret key. This prevents competitive intelligence or URL scanning attacks.
+3. **Base62 Encoding**: Encodes the scrambled large integer into a highly compact alphanumeric short code string (using characters `0-9`, `a-z`, `A-Z`).
+
+## 🛠️ Installation & Setup
+
+This project uses **uv** by Astral for lightning-fast dependency and environment management.
+
+### Prerequisite: Install uv
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+```
+
+### Setup Environment
+1. Clone this repository and navigate to the folder.
+2. Initialize and sync the virtual environment dependencies automatically:
+   ```bash
+   uv sync
+   ```
+
+### Running the Application
+Apply migrations and boot up the Django development server:
+```bash
+uv run python manage.py migrate
+uv run python manage.py runserver
+```
