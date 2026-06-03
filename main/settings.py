@@ -7,7 +7,6 @@ SECRET_KEY = 'django-insecure-m_x2n1oc#4dc-r@6kqkh&o^h#^y_@f9a0b93b%kt#t90q8x)9(
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -15,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'shortener',
 ]
 
@@ -48,13 +48,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "shortenerdb",
-        "USER": "postgresql",
-        "PASSWORD": "Pass123#",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
