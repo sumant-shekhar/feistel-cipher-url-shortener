@@ -2,12 +2,18 @@
 
 A collision-free URL shortener that obfuscates auto-incremented database IDs using a symmetric Feistel cipher before Base62 encoding. This prevents URL enumeration attacks and business metric leaks without the database overhead of hash-collision checks.
 
-## Core Design
+## Current Implementation
+The project is fully functional and uses:
+- **Django 6.0**: Core framework.
+- **Django Rest Framework**: For the `api/shorten/` endpoint.
+- **Custom Feistel Cipher**: A 32-bit block cipher implemented in `utils.py` to scramble sequential database IDs.
+- **Base62 Encoding**: To convert scrambled IDs into compact short codes (max 6 characters).
+- **SQLite**: Used for local development (configured in `settings.py`).
 
-1. **Write Path:** Long URL $\rightarrow$ DB Insert $\rightarrow$ Sequential ID (e.g., `105`) $\rightarrow$ Feistel Cipher $\rightarrow$ Scrambled ID (e.g., `94820`) $\rightarrow$ Base62 Encode $\rightarrow$ Short Code (`b9X`).
-2. **Read Path:** Short Code (`b9X`) $\rightarrow$ Base62 Decode $\rightarrow$ Scrambled ID (`94820`) $\rightarrow$ Inverse Feistel $\rightarrow$ Sequential ID (`105`) $\rightarrow$ Direct DB Primary Key Lookup.
-
-By using a bijective (one-to-one) format-preserving cipher, the system guarantees zero ID collisions, eliminating the need for iterative "loop-and-check" database queries during URL generation.
+### How to use
+1. **API**: POST to `/api/shorten/` with `long_url`.
+2. **Web**: Use the home page form.
+3. **Redirect**: Access `/{short_code}` to be redirected to the original URL.
 
 ## Architectural Trade-Offs
 
