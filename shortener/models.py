@@ -1,8 +1,11 @@
 from django.db import models
+from .utils import encrypt_id, base62_encode
 
 class URLMapping(models.Model):
-    long_url = models.URLField(max_length=2000)
+    long_url = models.URLField(max_length=2000, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.id} -> {self.long_url[:50]}"
+        short_code = base62_encode(encrypt_id(self.id))
+        return f"{short_code} -> {self.long_url[:50]}"
+

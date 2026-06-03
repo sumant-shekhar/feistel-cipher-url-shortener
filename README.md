@@ -40,26 +40,15 @@ A high-performance URL shortener built with Django and Python. Instead of auto-i
 
 ## 🛠️ Installation & Setup
 
-This project uses **uv** by Astral for lightning-fast dependency and environment management.
-
-### Prerequisite: Install uv
 ```bash
-# macOS/Linux
+# Linux
 curl -LsSf https://astral.sh | sh
 
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
-```
-
 ### Setup Environment
-1. Clone this repository and navigate to the folder.
-2. Initialize and sync the virtual environment dependencies automatically:
    ```bash
    uv sync
    ```
-
 ### Running the Application
-Apply migrations and boot up the Django development server:
 ```bash
 uv run python manage.py migrate
 uv run python manage.py runserver

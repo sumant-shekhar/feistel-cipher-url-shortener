@@ -13,7 +13,7 @@ def index(request):
     if request.method == "POST":
         long_url = request.POST.get("longurl")
         if long_url:
-            obj = URLMapping.objects.create(long_url=long_url)
+            obj, created = URLMapping.objects.get_or_create(long_url=long_url)
             short_code = base62_encode(encrypt_id(obj.pk))
             
             short_url = request.build_absolute_uri('/') + short_code
