@@ -6,6 +6,6 @@ class URLMapping(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        short_code = base62_encode(encrypt_id(self.id))
+        short_code = base62_encode(encrypt_id(self.pk))
         return f"{short_code} -> {self.long_url[:50]}"
 

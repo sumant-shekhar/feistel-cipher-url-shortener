@@ -6,7 +6,7 @@ class URLMappingSerializer(serializers.ModelSerializer):
     short_url = serializers.SerializerMethodField()
     class Meta:
         model = URLMapping
-        fields = ['id', 'long_url', 'short_url', 'created_at']
+        fields = '__all__'
         read_only_fields = ['id', 'created_at']
         extra_kwargs = {
             'long_url': {'validators': []}
