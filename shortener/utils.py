@@ -7,7 +7,7 @@ BASE62_ALPHABET = string.digits + string.ascii_lowercase + string.ascii_uppercas
 # This is a classic implementation that shows understanding of the concept.
 FEISTEL_ROUNDS = 4
 FEISTEL_KEY = 0xDEADBEEF  # A static key for the resume project
-
+ 
 def feistel_round_function(val, key):
     """A simple round function: (val * key) XOR key"""
     return ((val * key) ^ (key >> 4)) & 0xFFFF
