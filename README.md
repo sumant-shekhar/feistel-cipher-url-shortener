@@ -1,55 +1,46 @@
 # Feistel Cipher URL Shortener
 
-A collision-free URL shortener that obfuscates auto-incremented database IDs using a symmetric Feistel cipher before Base62 encoding. This prevents URL enumeration attacks and business metric leaks without the database overhead of hash-collision checks.
+A URL shortener that obfuscates sequential database IDs with a symmetric Feistel cipher and Base62 encoding. It produces compact, collision-free short codes while preventing URL enumeration and predictable analytics.
 
-## Current Implementation
-The project is fully functional and uses:
-- **Django 6.0**: Core framework.
-- **Django Rest Framework**: For the `api/shorten/` endpoint.
-- **Custom Feistel Cipher**: A 32-bit block cipher implemented in `utils.py` to scramble sequential database IDs.
-- **Base62 Encoding**: To convert scrambled IDs into compact short codes (max 6 characters).
-- **SQLite**: Used for local development (configured in `settings.py`).
+## Overview
+This project stores long URLs and maps them to short codes by:
 
-### How to use
-1. **API**: POST to `/api/shorten/` with `long_url`.
-2. **Web**: Use the home page form.
-3. **Redirect**: Access `/{short_code}` to be redirected to the original URL.
+- writing each URL to the database to obtain an auto-incrementing ID,
+- applying a reversible Feistel cipher to obfuscate the numeric ID,
+- encoding the obfuscated value in Base62,
+- resolving the short code back to the original URL with a direct lookup.
 
-## Architectural Trade-Offs
+## Key components
+- `shortener/utils.py`: Feistel cipher implementation and Base62 encoder/decoder.
+- `shortener/models.py`: persistent URL storage.
+- `shortener/views.py`: API and redirect handling.
+- `main/settings.py`: SQLite configuration for local development.
 
-* **Why Feistel + Base62:** Traditional hashing algorithms (MD5/SHA) cause collisions that require expensive database lookups at scale. Exposing raw sequential IDs invites scraping. This approach balances $O(1)$ database lookup speeds with cryptographic obfuscation.
-* **Limitations:** Introduces minor CPU overhead for bitwise operations per request. The block size must be constrained to keep the encoded output string short.
+## How it works
+1. Submit a long URL.
+2. Store the URL and receive an auto-increment database ID.
+3. Scramble the ID with the Feistel cipher into a pseudo-random 32-bit value.
+4. Encode the scrambled value in Base62 to generate the short code.
+5. Redirect requests for `/{short_code}` back to the stored URL.
 
-## Mathematical Core
+## Usage
+- API: POST to `/api/shorten/` with `long_url`.
+- Web: use the home page form if available.
+- Redirect: visit `/{short_code}` to reach the original URL.
 
-The cipher splits the integer bit-block into left ($L$) and right ($R$) halves, executing over $i$ rounds:
+## Design considerations
+- **Feistel cipher** avoids exposed sequential IDs and makes short codes hard to enumerate.
+- **Base62 encoding** keeps codes compact and URL-safe.
+- **SQLite** keeps the project simple for local development.
 
-$$L_i = R_{i-1}$$
-$$R_i = L_{i-1} \oplus F(R_{i-1}, K_i)$$
-
-The round function $F$ utilizes a pseudo-random bit-shuffling mechanism driven by a static internal key $K$.
-
-# 🔗 Cipher URL Shortener
-
-A high-performance URL shortener built with Django and Python. Instead of auto-incrementing public IDs or saving random strings in a database, this project secures internal database IDs using a Format-Preserving Feistel Cipher combined with Base62 encoding.
-
-## 🚀 Technical Architecture
-1. **Database Entry**: Stores the long URL and retrieves a standard sequential Auto-ID (e.g., `105`).
-2. **Feistel Cipher**: Scrambles the sequential ID into a pseudo-random, non-sequential 32-bit integer using a private secret key. This prevents competitive intelligence or URL scanning attacks.
-3. **Base62 Encoding**: Encodes the scrambled large integer into a highly compact alphanumeric short code string (using characters `0-9`, `a-z`, `A-Z`).
-
-## 🛠️ Installation & Setup
-
+## Installation
 ```bash
-# Linux
-curl -LsSf https://astral.sh | sh
-
-### Setup Environment
-   ```bash
-   uv sync
-   ```
-### Running the Application
-```bash
-uv run python manage.py migrate
-uv run python manage.py runserver
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
+
+## Notes
+This implementation is optimized for simplicity and local development. In a production deployment, replace SQLite with a production database and secure the encryption key material appropriately.
